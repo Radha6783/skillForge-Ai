@@ -1,0 +1,29 @@
+# Node dependencies — installed fresh inside the image
+node_modules/
+
+# Build output — produced inside the image during the build stage
+dist/
+dist-ssr/
+
+# Environment files — VITE_* variables are baked in at build time via ARG/ENV in Dockerfile
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# Version control
+.git/
+.gitignore
+
+# Logs
+*.log
+npm-debug.log*
+
+# Vite cache
+.vite/
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

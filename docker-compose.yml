@@ -1,0 +1,110 @@
+# =============================================================================
+# SkillForge AI — Docker Compose
+#
+# Services:
+#   db       — PostgreSQL 15 database
+#   backend  — FastAPI / Uvicorn application
+#   frontend — React SPA served by Nginx
+#
+# Usage:
+#   Copy .env.example to .env at the project root and fill in values.
+#   docker compose up --build
+#
+# Architecture (runtime):
+#   Browser → frontend:80 (Nginx)
+#   Browser → backend:8000 (Uvicorn, published to host)
+#   backend  → db:5432 (PostgreSQL, internal network only)
+# =============================================================================
+
+services:
+
+  # ---------------------------------------------------------------------------
+  # PostgreSQL Database
+  # ---------------------------------------------------------------------------
+  db:
+    image: postgres:15-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-skillforge}
+      POSTGRES_USER: ${POSTGRES_USER:-skillforge}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      # Expose on host only for local development tools (e.g. DBeaver).
+      # Remove this in production if DB should be fully internal.
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-skillforge} -d ${POSTGRES_DB:-skillforge}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - skillforge_net
+
+  # ---------------------------------------------------------------------------
+  # FastAPI Backend
+  # ---------------------------------------------------------------------------
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    env_file:
+      # Load from a root-level .env file (not committed).
+      # Copy .env.example → .env and fill in real values.
+      - .env
+    environment:
+      # Override DATABASE_URL so backend uses the Docker service name "db"
+      # rather than localhost (which would point to its own container).
+      DATABASE_URL: postgresql+psycopg2://${POSTGRES_USER:-skillforge}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-skillforge}
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8000/api/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      - skillforge_net
+
+  # ---------------------------------------------------------------------------
+  # React Frontend (Nginx)
+  # ---------------------------------------------------------------------------
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        # VITE_API_BASE_URL must point to where the BROWSER can reach the backend.
+        # The browser runs on the host machine, outside Docker's internal network.
+        # Therefore it connects via localhost:8000 (the published backend port).
+        # For production deployment, replace with your actual backend domain.
+        VITE_API_BASE_URL: ${VITE_API_BASE_URL:-http://localhost:8000}
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - skillforge_net
+
+# ---------------------------------------------------------------------------
+# Named volumes
+# ---------------------------------------------------------------------------
+volumes:
+  postgres_data:
+    driver: local
+
+# ---------------------------------------------------------------------------
+# Internal network
+# ---------------------------------------------------------------------------
+networks:
+  skillforge_net:
+    driver: bridge

@@ -1,0 +1,36 @@
+# Python cache and compiled files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.pdb
+
+# Virtual environments — dependencies are installed inside the image
+venv/
+.venv/
+
+# Environment files — secrets are injected at runtime, never baked in
+.env
+.env.*
+!.env.example
+
+# Version control
+.git/
+.gitignore
+
+# Test suite — not needed at runtime
+.pytest_cache/
+tests/
+
+# SQLite development databases — production uses PostgreSQL
+*.sqlite
+*.sqlite3
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Docs / misc
+*.md
