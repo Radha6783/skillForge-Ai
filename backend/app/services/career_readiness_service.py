@@ -20,6 +20,7 @@ from app.models.job_analysis import JobAnalysis, SkillGapReport
 from app.models.roadmap import Roadmap, RoadmapItem
 from app.models.interview import InterviewSession
 from app.models.project import ProjectRecommendation
+from app.models.skill import UserSkill, Skill
 from app.services.skill_gap_service import calculate_skill_gap
 from app.schemas.career_readiness import (
     CareerReadinessResponse,
@@ -260,7 +261,13 @@ def calculate_career_readiness(
         .first()
     )
     if not skill_gap:
-        skill_gap = calculate_skill_gap(job_analysis.id, user.id, db)
+        # Fetch user_skills for this user to pass to calculate_skill_gap
+        user_skills = (
+            db.query(UserSkill)
+            .filter(UserSkill.user_id == user.id)
+            .all()
+        )
+        skill_gap = calculate_skill_gap(job_analysis=job_analysis, user_skills=user_skills, db=db)
 
     skill_score = round(max(0.0, min(100.0, float(skill_gap.overall_match_percentage or 0.0))), 1)
     matching_skills = skill_gap.matching_skills or []

@@ -6,6 +6,7 @@ const Register = () => {
   const { register, login, isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
+  const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -37,7 +38,7 @@ const Register = () => {
     setSuccess('');
 
     if (!email.trim() || !password || !confirmPassword) {
-      setError('Please fill in all fields.');
+      setError('Please fill in all required fields.');
       return;
     }
 
@@ -54,29 +55,36 @@ const Register = () => {
 
     setIsSubmitting(true);
     try {
-      await register({ email, password });
+      await register({
+        email: email.trim(),
+        password,
+        full_name: fullName.trim() || undefined,
+      });
+
       setSuccess('Account created successfully! Logging you in...');
-      
-      // Auto login after registration
-      setTimeout(async () => {
-        try {
-          await login(email, password);
-          navigate('/dashboard');
-        } catch (loginErr) {
-          navigate('/login');
-        }
-      }, 1000);
+
+      // Immediate auto-login without race condition
+      try {
+        await login(email.trim(), password);
+        navigate('/dashboard');
+      } catch (loginErr) {
+        // If auto-login fails, navigate to login page
+        navigate('/login', { state: { message: 'Account created! Please sign in.' } });
+      }
     } catch (err) {
       if (import.meta.env.DEV) { console.error('Registration error:', err); }
-      const detail = err.response?.data?.detail;
-      if (typeof detail === 'string') {
-        setError(detail);
-      } else if (Array.isArray(detail)) {
-        setError(detail.map((e) => e.msg).join(', '));
+      if (!err.response) {
+        setError('Cannot connect to backend server. Please verify the backend is running at http://127.0.0.1:8000.');
       } else {
-        setError('Failed to create account. Email may already be registered.');
+        const detail = err.response?.data?.detail;
+        if (typeof detail === 'string') {
+          setError(detail);
+        } else if (Array.isArray(detail)) {
+          setError(detail.map((e) => e.msg || e.message).join(', '));
+        } else {
+          setError('Failed to create account. Email may already be registered.');
+        }
       }
-    } finally {
       setIsSubmitting(false);
     }
   };
@@ -104,6 +112,21 @@ const Register = () => {
         )}
 
         <form onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label className="form-label" htmlFor="fullName">
+              Full Name <span style={{ opacity: 0.6, fontSize: '0.85em' }}>(optional)</span>
+            </label>
+            <input
+              id="fullName"
+              type="text"
+              className="form-input"
+              placeholder="Alex Johnson"
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
+              disabled={isSubmitting}
+            />
+          </div>
+
           <div className="form-group">
             <label className="form-label" htmlFor="email">
               Email Address

@@ -68,6 +68,9 @@ function Navbar() {
             <Link to="/interviews" className="btn-secondary" style={{ padding: '0.5rem 0.9rem', fontSize: '0.875rem' }}>
               <Mic size={16} /> Interviews
             </Link>
+            <Link to="/project-recommendations" className="btn-secondary" style={{ padding: '0.5rem 0.9rem', fontSize: '0.875rem' }}>
+              <FolderKanban size={16} /> Projects
+            </Link>
             <button
 
               onClick={() => {
@@ -131,7 +134,7 @@ function HomePage() {
     <main style={{ display: 'grid', gap: '2rem' }}>
       <section className="glass-card" style={{ textAlign: 'center', padding: '3.5rem 2rem' }}>
         <div className="badge badge-success" style={{ marginBottom: '1rem' }}>
-          <Sparkles size={14} /> Phase 4 Active: Student Profile & Skill Management Complete
+          <Sparkles size={14} /> Full-Stack AI Career Platform — Production Ready
         </div>
         
         <h1 style={{ fontSize: '2.8rem', marginBottom: '1rem', fontWeight: '800' }}>
@@ -261,35 +264,47 @@ function HomePage() {
         </section>
       )}
 
-      {/* Architecture & Phase Roadmap */}
+      {/* Feature Grid */}
       <section className="glass-card">
         <h3 style={{ fontSize: '1.2rem', marginBottom: '1.2rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          <Activity size={20} color="var(--accent-primary)" /> Project Implementation Progress
+          <Activity size={20} color="var(--accent-primary)" /> Platform Features
         </h3>
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1rem' }}>
           <div style={{ padding: '1rem', borderRadius: 'var(--radius-md)', background: 'rgba(16, 185, 129, 0.08)', border: '1px solid rgba(16, 185, 129, 0.2)' }}>
-            <div style={{ fontSize: '0.85rem', color: '#34d399', fontWeight: 'bold', marginBottom: '0.2rem' }}>✓ PHASE 1</div>
-            <div style={{ fontWeight: '600', marginBottom: '0.4rem' }}>Setup & Health API</div>
-            <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Vite + React, FastAPI, CORS.</div>
+            <div style={{ fontSize: '0.85rem', color: '#34d399', fontWeight: 'bold', marginBottom: '0.2rem' }}>✓ Auth & Security</div>
+            <div style={{ fontWeight: '600', marginBottom: '0.4rem' }}>JWT Authentication</div>
+            <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Secure login, registration & session management.</div>
           </div>
 
           <div style={{ padding: '1rem', borderRadius: 'var(--radius-md)', background: 'rgba(16, 185, 129, 0.08)', border: '1px solid rgba(16, 185, 129, 0.2)' }}>
-            <div style={{ fontSize: '0.85rem', color: '#34d399', fontWeight: 'bold', marginBottom: '0.2rem' }}>✓ PHASE 2</div>
-            <div style={{ fontWeight: '600', marginBottom: '0.4rem' }}>Database & Models</div>
-            <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>PostgreSQL & 12 ORM models.</div>
+            <div style={{ fontSize: '0.85rem', color: '#34d399', fontWeight: 'bold', marginBottom: '0.2rem' }}>✓ AI Analysis</div>
+            <div style={{ fontWeight: '600', marginBottom: '0.4rem' }}>Job Description AI</div>
+            <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Gemini-powered skill extraction & gap scoring.</div>
           </div>
 
           <div style={{ padding: '1rem', borderRadius: 'var(--radius-md)', background: 'rgba(16, 185, 129, 0.08)', border: '1px solid rgba(16, 185, 129, 0.2)' }}>
-            <div style={{ fontSize: '0.85rem', color: '#34d399', fontWeight: 'bold', marginBottom: '0.2rem' }}>✓ PHASE 3</div>
-            <div style={{ fontWeight: '600', marginBottom: '0.4rem' }}>Auth & JWT Security</div>
-            <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>User login, register & session state.</div>
+            <div style={{ fontSize: '0.85rem', color: '#34d399', fontWeight: 'bold', marginBottom: '0.2rem' }}>✓ Learning Roadmap</div>
+            <div style={{ fontWeight: '600', marginBottom: '0.4rem' }}>Personalized Curriculum</div>
+            <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Week-by-week AI roadmap with progress tracking.</div>
           </div>
 
-          <div style={{ padding: '1rem', borderRadius: 'var(--radius-md)', background: 'rgba(99, 102, 241, 0.15)', border: '1px solid rgba(99, 102, 241, 0.4)' }}>
-            <div style={{ fontSize: '0.85rem', color: '#818cf8', fontWeight: 'bold', marginBottom: '0.2rem' }}>✓ PHASE 4</div>
-            <div style={{ fontWeight: '600', marginBottom: '0.4rem' }}>Profile & Skill Matrix</div>
-            <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Student profile & skill inventory CRUD.</div>
+          <div style={{ padding: '1rem', borderRadius: 'var(--radius-md)', background: 'rgba(16, 185, 129, 0.08)', border: '1px solid rgba(16, 185, 129, 0.2)' }}>
+            <div style={{ fontSize: '0.85rem', color: '#34d399', fontWeight: 'bold', marginBottom: '0.2rem' }}>✓ Interview Simulator</div>
+            <div style={{ fontWeight: '600', marginBottom: '0.4rem' }}>AI Technical Interviews</div>
+            <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Real-time AI-evaluated mock interviews with scoring.</div>
+          </div>
+
+          <div style={{ padding: '1rem', borderRadius: 'var(--radius-md)', background: 'rgba(16, 185, 129, 0.08)', border: '1px solid rgba(16, 185, 129, 0.2)' }}>
+            <div style={{ fontSize: '0.85rem', color: '#34d399', fontWeight: 'bold', marginBottom: '0.2rem' }}>✓ Project Recommendations</div>
+            <div style={{ fontWeight: '600', marginBottom: '0.4rem' }}>Portfolio Builder</div>
+            <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>AI-generated capstone project ideas with completion tracking.</div>
+          </div>
+
+          <div style={{ padding: '1rem', borderRadius: 'var(--radius-md)', background: 'rgba(16, 185, 129, 0.08)', border: '1px solid rgba(16, 185, 129, 0.2)' }}>
+            <div style={{ fontSize: '0.85rem', color: '#34d399', fontWeight: 'bold', marginBottom: '0.2rem' }}>✓ Career Readiness</div>
+            <div style={{ fontWeight: '600', marginBottom: '0.4rem' }}>4-Pillar Score Dashboard</div>
+            <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Composite readiness score across skills, roadmap, interviews & portfolio.</div>
           </div>
         </div>
       </section>

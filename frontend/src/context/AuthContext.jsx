@@ -35,7 +35,9 @@ export const AuthProvider = ({ children }) => {
     const data = await authAPI.login({ email, password });
     localStorage.setItem('token', data.access_token);
     setToken(data.access_token);
-    setUser(data.user);
+    // Backend /auth/login returns only token — fetch user profile separately
+    const userData = await authAPI.getMe();
+    setUser(userData);
     return data;
   };
 

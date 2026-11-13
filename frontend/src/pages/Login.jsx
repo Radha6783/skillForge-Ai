@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
-import { Link, useNavigate, Navigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation, Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 const Login = () => {
   const { login, isAuthenticated } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [infoMessage] = useState(location.state?.message || '');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // If already logged in, redirect to dashboard
@@ -27,17 +29,21 @@ const Login = () => {
 
     setIsSubmitting(true);
     try {
-      await login(email, password);
+      await login(email.trim(), password);
       navigate('/dashboard');
     } catch (err) {
       if (import.meta.env.DEV) { console.error('Login error:', err); }
-      const detail = err.response?.data?.detail;
-      if (typeof detail === 'string') {
-        setError(detail);
-      } else if (Array.isArray(detail)) {
-        setError(detail.map((e) => e.msg).join(', '));
+      if (!err.response) {
+        setError('Cannot connect to backend server. Please verify backend is running at http://127.0.0.1:8000.');
       } else {
-        setError('Invalid email or password. Please try again.');
+        const detail = err.response?.data?.detail;
+        if (typeof detail === 'string') {
+          setError(detail);
+        } else if (Array.isArray(detail)) {
+          setError(detail.map((e) => e.msg || e.message).join(', '));
+        } else {
+          setError('Invalid email or password. Please try again.');
+        }
       }
     } finally {
       setIsSubmitting(false);
@@ -51,6 +57,13 @@ const Login = () => {
           <h2>Welcome Back</h2>
           <p>Log in to access your personalized career roadmaps</p>
         </div>
+
+        {infoMessage && (
+          <div className="alert alert-success" style={{ marginBottom: '1rem' }}>
+            <span>ℹ️</span>
+            <span>{infoMessage}</span>
+          </div>
+        )}
 
         {error && (
           <div className="alert alert-error">
